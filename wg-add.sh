@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$#" -lt 4 ]; then
-    echo "Usage ${0} peer_name peer_pubkey ip port (allow_ips)"
+if [ "$#" -ne 4 ]; then
+    echo "Usage ${0} peer_name peer_pubkey ip port"
     exit
 fi
 
@@ -11,9 +11,13 @@ PEER_PUBKEY=$2
 ENDPOINT_IP=$3
 ENDPOINT_PORT=$4
 
-if [ "$#" -eq 5 ]; then
-    ALLOW_IPS=$5
-    wg set wg-${CONF_NAME}-${PEER_NAME} peer ${PEER_PUBKEY} endpoint ${ENDPOINT_IP}:${ENDPOINT_PORT} allowed-ips ${ALLOW_IPS}
-else
-    wg set wg-${CONF_NAME}-${PEER_NAME} peer ${PEER_PUBKEY} endpoint ${ENDPOINT_IP}:${ENDPOINT_PORT}
-fi
+cat ${CONF_NAME}.conf > ${CONF_NAME}-${PEER_NAME}.conf
+
+echo "
+[Peer]
+Endpoint = ${ENDPOINT_IP}:${ENDPOINT_PORT}
+PublicKey = ${PEER_PUBKEY}
+AllowedIPs = 0.0.0.0/0, ::/0" >> ${CONF_NAME}-${PEER_NAME}.conf
+
+systemctl enable wg-quick@${CONF_NAME}-${PEER_NAME}
+systemctl start wg-quick@${CONF_NAME}-${PEER_NAME}

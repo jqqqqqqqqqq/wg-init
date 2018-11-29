@@ -35,8 +35,8 @@ function init()
     echo ""
 
     echo "running systemctl start wg-quick@${SAVE_NAME}"
-    systemctl enable wg-quick@${SAVE_NAME}
-    systemctl start wg-quick@${SAVE_NAME}
+    # systemctl enable wg-quick@${SAVE_NAME}
+    # systemctl start wg-quick@${SAVE_NAME}
 
     echo "To Add this node, copy and paste the line below on other nodes"
     echo ""
