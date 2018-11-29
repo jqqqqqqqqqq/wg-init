@@ -22,7 +22,7 @@ function init()
     echo ""
 
     echo "[Interface]
-    PrivateKey = ${WG_PUBKEY}
+    PrivateKey = ${WG_PRIVKEY}
     ListenPort = ${PORT}" > "${SAVE_NAME}".conf
 
     echo $WG_PUBKEY > "${SAVE_NAME}".pub
