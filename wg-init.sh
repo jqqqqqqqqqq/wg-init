@@ -3,7 +3,7 @@
 
 function init()
 {
-    if [ "$#" -ne 5 ]; then
+    if [ "$#" -ne 4 ]; then
         echo "Usage ${0} init config_name hostname port"
         exit
     fi
