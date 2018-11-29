@@ -34,7 +34,7 @@ iface wg-${CONF_NAME}-${PEER_NAME} inet static
         pointopoint ${PEER_ADDR}
         pre-up ip link add wg-${CONF_NAME}-${PEER_NAME} type wireguard
         pre-up wg setconf wg-${CONF_NAME}-${PEER_NAME} /etc/wireguard/${CONF_NAME}-${PEER_NAME}.conf
-        post-up ip -6 addr add bbbb::${LOCAL_ADDR} peer bbbb::${PEER_ADDR} dev wg-home-us-hi
+        post-up ip -6 addr add bbbb::${LOCAL_ADDR} peer bbbb::${PEER_ADDR} dev wg-${CONF_NAME}-${PEER_NAME}
         post-down ip link del wg-${CONF_NAME}-${PEER_NAME}
 " > /etc/network/interfaces.d/${CONF_NAME}-${PEER_NAME}.conf
     if ! grep "source /etc/network/interfaces.d/*" /etc/network/interfaces>/dev/null; then
