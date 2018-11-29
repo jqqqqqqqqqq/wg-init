@@ -34,10 +34,6 @@ function init()
     echo "Config saved to ${SAVE_NAME}.conf"
     echo ""
 
-    echo "running systemctl start wg-quick@${SAVE_NAME}"
-    # systemctl enable wg-quick@${SAVE_NAME}
-    # systemctl start wg-quick@${SAVE_NAME}
-
     echo "To Add this node, copy and paste the line below on other nodes"
     echo ""
     echo "${SAVE_NAME} ${WG_PUBKEY} ${HOST_NAME} ${PORT}" | tee "${SAVE_NAME}".add
@@ -54,8 +50,6 @@ function deinit()
     fi
 
     SAVE_NAME=$2
-    systemctl stop wg-quick@${SAVE_NAME}
-    systemctl disable wg-quick@${SAVE_NAME}
     rm ${SAVE_NAME}.conf ${SAVE_NAME}.pub ${SAVE_NAME}.add 2>/dev/null
 }
 
@@ -64,9 +58,7 @@ case "$1" in
     init $@;;
     deinit)
     deinit $@;;
-    reload)
-    systemctl reload wg-quick;;
-    *) echo "usage: $0 init|deinit|reload" >&2
+    *) echo "usage: $0 init|deinit" >&2
        exit 1
        ;;
 esac
