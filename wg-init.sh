@@ -60,9 +60,9 @@ function deinit()
 
 case "$1" in 
     init) 
-    init;;
+    init $@;;
     deinit)
-    deinit;;
+    deinit $@;;
     reload)
     systemctl reload wg-quick;;
     *) echo "usage: $0 init|deinit|reload" >&2
