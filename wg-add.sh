@@ -4,8 +4,8 @@ CONF_NAME=
 
 function init()
 {
-    if [ "$#" -ne 7 ]; then
-        echo "Usage ${0} init peer_name peer_pubkey endpoint port local_addr peer_addr"
+    if [ "$#" -ne 8 ]; then
+        echo "Usage ${0} init peer_name peer_pubkey endpoint local_port peer_port local_addr peer_addr"
         exit
     fi
 
@@ -13,13 +13,15 @@ function init()
     PEER_NAME=$2
     PEER_PUBKEY=$3
     ENDPOINT_IP=$4
-    ENDPOINT_PORT=$5
-    LOCAL_ADDR=$6
-    PEER_ADDR=$7
+    LOCAL_PORT=$5
+    ENDPOINT_PORT=$6
+    LOCAL_ADDR=$7
+    PEER_ADDR=$8
 
     cat ${CONF_NAME}.conf > ${CONF_NAME}-${PEER_NAME}.conf
 
-    echo "
+    echo "    ListenPort = ${LOCAL_PORT}
+
 [Peer]
     Endpoint = ${ENDPOINT_IP}:${ENDPOINT_PORT}
     PublicKey = ${PEER_PUBKEY}
@@ -32,8 +34,10 @@ iface wg-${CONF_NAME}-${PEER_NAME} inet static
         pointopoint ${PEER_ADDR}
         pre-up ip link add wg-${CONF_NAME}-${PEER_NAME} type wireguard
         pre-up wg setconf wg-${CONF_NAME}-${PEER_NAME} /etc/wireguard/${CONF_NAME}-${PEER_NAME}.conf
-        post-up ip -6 addr add bbbb::${LOCAL_ADDR} peer bbbb::${PEER_ADDR} dev wg-${CONF_NAME}-${PEER_NAME}
         post-down ip link del wg-${CONF_NAME}-${PEER_NAME}
+iface wg-${CONF_NAME}-${PEER_NAME} inet6 static
+        address bbbb::${LOCAL_ADDR}/128
+        pointopoint bbbb::${PEER_ADDR}/128
 " > /etc/network/interfaces.d/${CONF_NAME}-${PEER_NAME}.conf
     if ! grep "source /etc/network/interfaces.d/*" /etc/network/interfaces>/dev/null; then
         echo "source /etc/network/interfaces.d/*" >> /etc/network/interfaces

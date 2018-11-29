@@ -3,8 +3,8 @@
 
 function init()
 {
-    if [ "$#" -ne 4 ]; then
-        echo "Usage ${0} init config_name hostname port"
+    if [ "$#" -ne 3 ]; then
+        echo "Usage ${0} init config_name hostname"
         exit
     fi
 
@@ -12,18 +12,14 @@ function init()
     WG_PRIVKEY=$(wg genkey)
     WG_PUBKEY=$(echo ${WG_PRIVKEY} | wg pubkey)
 
-    IP_INTERNAL=$5
-    PORT=$4
     HOST_NAME=$3
 
-    echo "Port: ${PORT}"
     echo "Private Key: ${WG_PRIVKEY}"
     echo "Public Key: ${WG_PUBKEY}"
     echo ""
 
     echo "[Interface]
-    PrivateKey = ${WG_PRIVKEY}
-    ListenPort = ${PORT}" > "${SAVE_NAME}".conf
+    PrivateKey = ${WG_PRIVKEY}" > "${SAVE_NAME}".conf
 
     echo $WG_PUBKEY > "${SAVE_NAME}".pub
 
@@ -33,7 +29,7 @@ function init()
 
     echo "To Add this node, copy and paste the line below on other nodes"
     echo ""
-    echo "${SAVE_NAME} ${WG_PUBKEY} ${HOST_NAME} ${PORT}" | tee "${SAVE_NAME}".add
+    echo "${SAVE_NAME} ${WG_PUBKEY} ${HOST_NAME}" | tee "${SAVE_NAME}".add
 
     sed -e "s/^CONF_NAME=.*$/CONF_NAME=${SAVE_NAME}/" wg-add.sh > wg-add-${SAVE_NAME}.sh
     chmod +x wg-add-${SAVE_NAME}.sh
