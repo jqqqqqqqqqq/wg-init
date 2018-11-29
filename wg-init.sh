@@ -1,42 +1,71 @@
 #!/bin/bash
 
-if [ "$#" -ne 4 ]; then
-    echo "Usage ${0} config_name hostname port internal_ip"
-    exit
-fi
 
-SAVE_NAME=$1
-WG_PRIVKEY=$(wg genkey)
-WG_PUBKEY=$(echo ${WG_PRIVKEY} | wg pubkey)
+function init()
+{
+    if [ "$#" -ne 5 ]; then
+        echo "Usage ${0} init config_name hostname port internal_ip"
+        exit
+    fi
 
-IP_INTERNAL=$4
-PORT=$3
-HOSTNAME=$2
+    SAVE_NAME=$2
+    WG_PRIVKEY=$(wg genkey)
+    WG_PUBKEY=$(echo ${WG_PRIVKEY} | wg pubkey)
 
-echo "IP Address: ${IP_INTERNAL}"
-echo "Port: ${PORT}"
-echo "Private Key: ${WG_PRIVKEY}"
-echo "Public Key: ${WG_PUBKEY}"
-echo ""
+    IP_INTERNAL=$5
+    PORT=$4
+    HOSTNAME=$3
 
-echo "[Interface]
-PrivateKey = ${WG_PUBKEY}
-ListenPort = ${PORT}
-SaveConfig = true
-Address = ${IP_INTERNAL}" > "${SAVE_NAME}".conf
+    echo "IP Address: ${IP_INTERNAL}"
+    echo "Port: ${PORT}"
+    echo "Private Key: ${WG_PRIVKEY}"
+    echo "Public Key: ${WG_PUBKEY}"
+    echo ""
 
-echo $WG_PUBKEY > "${SAVE_NAME}".pub
+    echo "[Interface]
+    PrivateKey = ${WG_PUBKEY}
+    ListenPort = ${PORT}
+    SaveConfig = true
+    Address = ${IP_INTERNAL}" > "${SAVE_NAME}".conf
 
-echo "Public Key saved to ${SAVE_NAME}.pub"
-echo "Config saved to ${SAVE_NAME}.conf"
-echo ""
+    echo $WG_PUBKEY > "${SAVE_NAME}".pub
 
-echo "running systemctl start wg-quick@${SAVE_NAME}"
-systemctl enable wg-quick@${SAVE_NAME}
-systemctl start wg-quick@${SAVE_NAME}
+    echo "Public Key saved to ${SAVE_NAME}.pub"
+    echo "Config saved to ${SAVE_NAME}.conf"
+    echo ""
 
-echo "To Add this node, copy and paste the line below on other nodes"
-echo ""
-echo "  ${SAVE_NAME} ${WG_PUBKEY} ${HOSTNAME} ${PORT}"
+    echo "running systemctl start wg-quick@${SAVE_NAME}"
+    systemctl enable wg-quick@${SAVE_NAME}
+    systemctl start wg-quick@${SAVE_NAME}
 
-sed -i'' -e "s/^HOSTNAME=.*$/HOSTNAME=${HOSTNAME}/" wg-add.sh
+    echo "To Add this node, copy and paste the line below on other nodes"
+    echo ""
+    echo "${SAVE_NAME} ${WG_PUBKEY} ${HOSTNAME} ${PORT}" | tee "${SAVE_NAME}".add
+
+    sed -i'' -e "s/^HOSTNAME=.*$/HOSTNAME=${config_name}/" wg-add.sh
+}
+
+function deinit()
+{
+    if [ "$#" -ne 2 ]; then
+        echo "Usage ${0} deinit config_name "
+        exit
+    fi
+
+    SAVE_NAME=$2
+    systemctl stop wg-quick@${SAVE_NAME}
+    systemctl disable wg-quick@${SAVE_NAME}
+    rm ${SAVE_NAME}.conf ${SAVE_NAME}.pub ${SAVE_NAME}.add 2>/dev/null
+}
+
+case "$1" in 
+    init) 
+    init;;
+    deinit)
+    deinit;;
+    reload)
+    systemctl reload wg-quick;;
+    *) echo "usage: $0 init|deinit|reload" >&2
+       exit 1
+       ;;
+esac
