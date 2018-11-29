@@ -20,7 +20,7 @@ function init()
     cat ${CONF_NAME}.conf > ${CONF_NAME}-${PEER_NAME}.conf
 
     echo "
-    [Peer]
+[Peer]
     Endpoint = ${ENDPOINT_IP}:${ENDPOINT_PORT}
     PublicKey = ${PEER_PUBKEY}
     AllowedIPs = 0.0.0.0/0, ::/0" >> ${CONF_NAME}-${PEER_NAME}.conf
@@ -34,8 +34,8 @@ iface wg-${CONF_NAME}-${PEER_NAME} inet static
         pre-up wg setconf wg-${CONF_NAME}-${PEER_NAME} /etc/wireguard/${CONF_NAME}-${PEER_NAME}.conf
         post-down ip link del wg-${CONF_NAME}-${PEER_NAME}
 iface wg-${CONF_NAME}-${PEER_NAME} inet6 static
-        address bbbb::${LOCAL_ADDR}
-        pointopoint bbbb::${PEER_ADDR}
+        address bbbb::${LOCAL_ADDR}/128
+        pointopoint bbbb::${PEER_ADDR}/128
 " > /etc/network/interfaces.d/${CONF_NAME}-${PEER_NAME}.conf
     grep "source /etc/network/interfaces.d/*" /etc/network/interfaces || echo "source /etc/network/interfaces.d/*" >> /etc/network/interfaces
 
