@@ -14,7 +14,7 @@ function init()
 
     IP_INTERNAL=$5
     PORT=$4
-    HOSTNAME=$3
+    HOST_NAME=$3
 
     echo "IP Address: ${IP_INTERNAL}"
     echo "Port: ${PORT}"
@@ -40,9 +40,10 @@ function init()
 
     echo "To Add this node, copy and paste the line below on other nodes"
     echo ""
-    echo "${SAVE_NAME} ${WG_PUBKEY} ${HOSTNAME} ${PORT}" | tee "${SAVE_NAME}".add
+    echo "${SAVE_NAME} ${WG_PUBKEY} ${HOST_NAME} ${PORT}" | tee "${SAVE_NAME}".add
 
-    sed -i'' -e "s/^HOSTNAME=.*$/HOSTNAME=${config_name}/" wg-add.sh
+    sed -e "s/^CONF_NAME=.*$/CONF_NAME=${SAVE_NAME}/" wg-add.sh > wg-add-${SAVE_NAME}.sh
+    chmod +x wg-add-${SAVE_NAME}.sh
 }
 
 function deinit()
