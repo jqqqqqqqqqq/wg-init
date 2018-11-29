@@ -50,7 +50,7 @@ function start() {
         exit
     fi
     PEER_NAME=$2
-    ip link set wg-${CONF_NAME}-${PEER_NAME} up
+    ifup wg-${CONF_NAME}-${PEER_NAME}
 }
 
 function stop() {
@@ -59,7 +59,7 @@ function stop() {
         exit
     fi
     PEER_NAME=$2
-    ip link set wg-${CONF_NAME}-${PEER_NAME} down
+    ifdown wg-${CONF_NAME}-${PEER_NAME}
 }
 
 function deinit() {
