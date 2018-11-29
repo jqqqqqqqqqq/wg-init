@@ -3,8 +3,8 @@
 
 function init()
 {
-    if [ "$#" -ne 4 ]; then
-        echo "Usage ${0} init config_name hostname port"
+    if [ "$#" -ne 5 ]; then
+        echo "Usage ${0} init config_name hostname port listen_ip"
         exit
     fi
 
@@ -25,7 +25,6 @@ function init()
     echo "[Interface]
     PrivateKey = ${WG_PUBKEY}
     ListenPort = ${PORT}
-    SaveConfig = true
     Address = ${IP_INTERNAL}" > "${SAVE_NAME}".conf
 
     echo $WG_PUBKEY > "${SAVE_NAME}".pub

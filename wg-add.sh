@@ -37,6 +37,8 @@ iface wg-${CONF_NAME}-${PEER_NAME} inet6 static
         address bbbb::${LOCAL_ADDR}
         pointopoint bbbb::${PEER_ADDR}
 " > /etc/network/interfaces.d/${CONF_NAME}-${PEER_NAME}.conf
+    grep "source /etc/network/interfaces.d/*" /etc/network/interfaces || echo "source /etc/network/interfaces.d/*" >> /etc/network/interfaces
+
     start $@
 }
 
