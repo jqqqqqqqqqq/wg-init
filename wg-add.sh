@@ -41,7 +41,7 @@ iface wg-${CONF_NAME}-${PEER_NAME} inet6 static
 }
 
 function start() {
-    if [ "$#" -ne 2 ]; then
+    if [ "$#" -lt 2 ]; then
         echo "Usage ${0} start peer_name"
         exit
     fi
@@ -50,7 +50,7 @@ function start() {
 }
 
 function stop() {
-    if [ "$#" -ne 2 ]; then
+    if [ "$#" -lt 2 ]; then
         echo "Usage ${0} stop peer_name"
         exit
     fi
