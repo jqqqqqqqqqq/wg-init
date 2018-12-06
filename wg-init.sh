@@ -34,7 +34,7 @@ function init()
     echo "${SAVE_NAME} ${WG_PUBKEY} ${HOST_NAME}" | tee "${SAVE_NAME}".add
 
     sed -e "s/^CONF_NAME=.*$/CONF_NAME=${SAVE_NAME}/" wg-add.sh > wg-add-${SAVE_NAME}.sh
-    sed -i'' -e "s/^MTU=.*$/CONF_NAME=${MTU}/" wg-add-${SAVE_NAME}.sh
+    sed -i'' -e "s/^MTU=.*$/MTU=${MTU}/" wg-add-${SAVE_NAME}.sh
 	chmod +x wg-add-${SAVE_NAME}.sh
 }
 
@@ -45,8 +45,11 @@ function update()
         echo "MTU recommends 1420"
         exit
     fi
+	SAVE_NAME=$2
+	HOST_NAME=$3
+	MTU=$4
 	sed -e "s/^CONF_NAME=.*$/CONF_NAME=${SAVE_NAME}/" wg-add.sh > wg-add-${SAVE_NAME}.sh
-	sed -i'' -e "s/^MTU=.*$/CONF_NAME=${MTU}/" wg-add-${SAVE_NAME}.sh
+	sed -i'' -e "s/^MTU=.*$/MTU=${MTU}/" wg-add-${SAVE_NAME}.sh
 	chmod +x wg-add-${SAVE_NAME}.sh
 }
 
