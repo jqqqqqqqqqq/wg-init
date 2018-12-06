@@ -3,8 +3,9 @@
 
 function init()
 {
-    if [ "$#" -ne 3 ]; then
-        echo "Usage ${0} init config_name hostname"
+    if [ "$#" -ne 4 ]; then
+        echo "Usage ${0} init config_name hostname mtu"
+		echo "MTU recommends 1420"
         exit
     fi
 
@@ -13,6 +14,7 @@ function init()
     WG_PUBKEY=$(echo ${WG_PRIVKEY} | wg pubkey)
 
     HOST_NAME=$3
+	MTU=$4
 
     echo "Private Key: ${WG_PRIVKEY}"
     echo "Public Key: ${WG_PUBKEY}"
@@ -32,7 +34,20 @@ function init()
     echo "${SAVE_NAME} ${WG_PUBKEY} ${HOST_NAME}" | tee "${SAVE_NAME}".add
 
     sed -e "s/^CONF_NAME=.*$/CONF_NAME=${SAVE_NAME}/" wg-add.sh > wg-add-${SAVE_NAME}.sh
-    chmod +x wg-add-${SAVE_NAME}.sh
+    sed -i'' -e "s/^MTU=.*$/CONF_NAME=${MTU}/" wg-add-${SAVE_NAME}.sh
+	chmod +x wg-add-${SAVE_NAME}.sh
+}
+
+function update()
+{
+	if [ "$#" -ne 4 ]; then
+        echo "Usage ${0} update config_name hostname mtu"
+        echo "MTU recommends 1420"
+        exit
+    fi
+	sed -e "s/^CONF_NAME=.*$/CONF_NAME=${SAVE_NAME}/" wg-add.sh > wg-add-${SAVE_NAME}.sh
+	sed -i'' -e "s/^MTU=.*$/CONF_NAME=${MTU}/" wg-add-${SAVE_NAME}.sh
+	chmod +x wg-add-${SAVE_NAME}.sh
 }
 
 function deinit()
@@ -51,7 +66,9 @@ case "$1" in
     init $@;;
     deinit)
     deinit $@;;
-    *) echo "usage: $0 init|deinit" >&2
+	update)
+	update $@;;
+    *) echo "usage: $0 init|update|deinit" >&2
        exit 1
        ;;
 esac
