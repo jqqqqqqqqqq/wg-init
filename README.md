@@ -8,8 +8,9 @@ Let's say we have two peers: Alice and Bob:
 First: (On both side)
 
 ```bash
+git clone https://github.com/jqqqqqqqqqq/wg-init.git /etc/wireguard
 cd /etc/wireguard
-git clone https://github.com/jqqqqqqqqqq/wg-init.git .
+./wg-install.sh
 ./wg-init.sh init [config_name] [hostname]
 ```
 
