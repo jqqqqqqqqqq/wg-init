@@ -34,8 +34,9 @@ iface wg-${CONF_NAME}-${PEER_NAME} inet static
         address ${LOCAL_ADDR}
         pointopoint ${PEER_ADDR}
 		mtu ${MTU}
-        pre-up ip link show wg-${CONF_NAME}-${PEER_NAME} || ip link add wg-${CONF_NAME}-${PEER_NAME} type wireguard
-        pre-up wg setconf wg-${CONF_NAME}-${PEER_NAME} /etc/wireguard/${CONF_NAME}-${PEER_NAME}.conf
+        pre-up ip link show wg-${CONF_NAME}-${PEER_NAME} 2>/dev/null|| ip link add wg-${CONF_NAME}-${PEER_NAME} type wireguard
+        pre-up ip link set wg-${CONF_NAME}-${PEER_NAME} up
+	pre-up wg setconf wg-${CONF_NAME}-${PEER_NAME} /etc/wireguard/${CONF_NAME}-${PEER_NAME}.conf
         post-up ip -6 addr add bbbb::${LOCAL_ADDR} peer bbbb::${PEER_ADDR} dev wg-${CONF_NAME}-${PEER_NAME}
         post-down ip link del wg-${CONF_NAME}-${PEER_NAME}
 " > /etc/network/interfaces.d/${CONF_NAME}-${PEER_NAME}.conf
